@@ -106,7 +106,6 @@ class Http {
         break;
       }
       case StatusCode.Forbidden: {
-        // Handle Forbidden
         break;
       }
       case StatusCode.Unauthorized: {
