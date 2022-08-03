@@ -14,7 +14,6 @@ export const getCourses = async (): Promise<ICourse[]> => {
   if (!courses.length) {
     const { data } = await http.get<ICourse[]>("/courses");
     courseStore.set(data);
-
     return data;
   }
 
