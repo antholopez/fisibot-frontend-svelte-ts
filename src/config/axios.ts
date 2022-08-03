@@ -3,6 +3,7 @@ import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 import { notify } from "../utils/notification";
 import { push } from "svelte-spa-router";
+import { authStore } from "./../state/store";
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
@@ -50,10 +51,10 @@ class Http {
 
     newHttp.interceptors.response.use(
       (response) => response,
-      (error) => {
+      async (error) => {
         const url = error.config.url;
         const { response } = error;
-        return this.handleError(response, url);
+        this.handleError(response, url);
       }
     );
 
@@ -109,7 +110,7 @@ class Http {
         break;
       }
       case StatusCode.Unauthorized: {
-        localStorage.removeItem("userStorage");
+        authStore.setUserSession(null);
         Cookies.remove("jwt");
         await push("/login");
         if (url === "/authentication/login")
