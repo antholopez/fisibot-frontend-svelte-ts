@@ -1,6 +1,7 @@
 import Notify from "simple-notify";
 
 type status = "success" | "error" | "warning" | "info";
+
 export const notify = (status: status, title: string, text?: string) => {
   try {
     new Notify({
