@@ -7,20 +7,19 @@
   import Loading from "./../components/Loading.svelte";
   import Header from "./../components/Header.svelte";
   import ModalCreateCourse from "./../components/modals/CreateCourse.svelte";
-  import {
-    authStore,
-  } from "./../state/store";
+  import { authStore } from "./../state/store";
   import type { ICourse } from "./../interfaces/course.interface";
   import type { ISchool } from "./../interfaces/school.interface";
+  import type { IAuthUser } from "./../interfaces/auth.interface";
 
   let open = false;
   const toggle = () => (open = !open);
 
   let loading = false;
-  let userSession = null;
-  let courses = [];
+  let userSession: IAuthUser = null;
+  let courses: ICourse[] = [];
   let textSearch = "";
-  let filteredCourses = [];
+  let filteredCourses: ICourse[] = [];
   let schools: ISchool[] = [];
 
   onMount(async () => {
@@ -48,14 +47,12 @@
 
   $: if (filteredCourses.length && !courses.length) courses = filteredCourses;
 
-  const searchCourses = (event) => {
+  const searchCourses = (event: any) => {
     const value = event.target.value;
     filteredCourses = courses.filter((course) =>
       course.name.toLowerCase().includes(value)
     );
   };
-
-  
 </script>
 
 <Header />
@@ -157,11 +154,11 @@
   </div>
 {/if}
 <ModalCreateCourse
-  bind:open={open}
-  toggle={toggle}
-  bind:course={course}
-  schools={schools}
-  bind:filteredCourses={filteredCourses}
+  bind:open
+  {toggle}
+  bind:course
+  {schools}
+  bind:filteredCourses
 />
 
 <style>
