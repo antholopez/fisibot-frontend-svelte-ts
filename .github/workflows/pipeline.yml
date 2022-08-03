@@ -69,15 +69,15 @@ jobs:
 
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 400 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} << EOF
+          ssh -o StrictHostKeyChecking=no -i private_key $USER_NAME@$HOSTNAME << EOF
 
             touch .env.production
-            echo VITE_API_BASE_URL=${VITE_API_BASE_URL} >> .env.production
+            echo VITE_API_BASE_URL=$VITE_API_BASE_URL >> .env.production
 
-            docker pull anthodev1195/fisibot-frontend-svelte-ts:latest
-            docker stop fisibot-frontend-svelte-ts || true
-            docker rm fisibot-frontend-svelte-ts || true
-            docker run -p 5000:5000 -d --restart unless-stopped --hostname fisibot-frontend-svelte-ts --name fisibot-frontend-svelte-ts anthodev1195/fisibot-frontend-svelte-ts:latest
+            docker pull $DOCKER_USERNAME/$DOCKER_REPOSITORY:latest
+            docker stop $DOCKER_REPOSITORY || true
+            docker rm $DOCKER_REPOSITORY || true
+            docker run -p $PORT:$PORT -d --restart unless-stopped --hostname $DOCKER_REPOSITORY --name $DOCKER_REPOSITORY $DOCKER_USERNAME/$DOCKER_REPOSITORY:latest
 
             docker image prune -f
             rm -rf .env.production
