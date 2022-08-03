@@ -1,0 +1,6 @@
+# Versioning and metadata
+.git
+.gitignore
+
+# Build dependencies
+node_modules
