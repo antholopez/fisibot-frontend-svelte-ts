@@ -54,7 +54,7 @@ class Http {
       async (error) => {
         const url = error.config.url;
         const { response } = error;
-        this.handleError(response, url);
+        return this.handleError(response, url);
       }
     );
 
