@@ -74,7 +74,7 @@ jobs:
             touch .env.production
             echo VITE_API_BASE_URL=$VITE_API_BASE_URL >> .env.production
 
-            docker ps
+            docker logout
             docker pull $DOCKER_USERNAME/$DOCKER_REPOSITORY:latest
             docker stop $DOCKER_REPOSITORY || true
             docker rm $DOCKER_REPOSITORY || true
