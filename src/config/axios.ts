@@ -128,7 +128,6 @@ class Http {
         break;
       }
       case StatusCode.TooManyRequests: {
-        // Handle TooManyRequests
         break;
       }
     }
