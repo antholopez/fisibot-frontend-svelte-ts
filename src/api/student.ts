@@ -1,5 +1,5 @@
 import type { IStudent } from "./../interfaces/student.interface";
-import { http } from "./../config/axios1";
+import { http } from "../config/axios";
 
 export const createStudent = async (body: any): Promise<IStudent> => {
   const { data } = await http.post<IStudent>("/users/students", body);

@@ -1,38 +1,115 @@
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
+import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
+import { notify } from "../utils/notification";
 import { push } from "svelte-spa-router";
-import { notify } from "./../utils/notification";
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
-const instance = axios.create({
-  baseURL: VITE_API_BASE_URL,
-  timeout: 60000,
-});
+enum StatusCode {
+  Unauthorized = 401,
+  Forbidden = 403,
+  TooManyRequests = 429,
+  InternalServerError = 500,
+}
 
-instance.interceptors.request.use((config) => {
-  console.log("axios request: ", config);
+const headers: Readonly<Record<string, string | boolean>> = {
+  Accept: "application/json",
+  "Content-Type": "application/json; charset=utf-8",
+};
 
-  const bearerToken = Cookies.get("jwt");
-  if (bearerToken) config.headers.Authorization = `Bearer ${bearerToken}`;
+const injectToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
+  try {
+    const token = Cookies.get("jwt");
 
-  return config;
-});
+    if (token) config.headers.Authorization = `Bearer ${token}`;
 
-instance.interceptors.response.use(
-  (config) => {
-    console.log("axios response ok: ", config);
     return config;
-  },
-  async (error) => {
-    const { response } = error;
-    const { status, statusText } = response;
-    console.log("status: ", status);
-    console.log("statusText: ", statusText);
-    if (status === 401 && statusText === "Unauthorized") {
-      try {
-        console.log("axios response 401: ", response);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+class Http {
+  private instance: AxiosInstance | null = null;
+
+  private get http(): AxiosInstance {
+    return this.instance != null ? this.instance : this.initHttp();
+  }
+
+  initHttp() {
+    const newHttp = axios.create({
+      baseURL: VITE_API_BASE_URL,
+      timeout: 60000,
+      headers,
+    });
+
+    newHttp.interceptors.request.use(injectToken, (error) =>
+      Promise.reject(error)
+    );
+
+    newHttp.interceptors.response.use(
+      (response) => response,
+      (error) => {
         const url = error.config.url;
+        const { response } = error;
+        return this.handleError(response, url);
+      }
+    );
+
+    this.instance = newHttp;
+    return newHttp;
+  }
+
+  request<T = any, R = AxiosResponse<T>>(
+    config: AxiosRequestConfig
+  ): Promise<R> {
+    return this.http.request(config);
+  }
+
+  async get<T = any, R = AxiosResponse<T>>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<R> {
+    return this.http.get<T, R>(url, config);
+  }
+
+  post<T = any, R = AxiosResponse<T>>(
+    url: string,
+    data?: T,
+    config?: AxiosRequestConfig
+  ): Promise<R> {
+    return this.http.post<T, R>(url, data, config);
+  }
+
+  put<T = any, R = AxiosResponse<T>>(
+    url: string,
+    data?: T,
+    config?: AxiosRequestConfig
+  ): Promise<R> {
+    return this.http.put<T, R>(url, data, config);
+  }
+
+  delete<T = any, R = AxiosResponse<T>>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<R> {
+    return this.http.delete<T, R>(url, config);
+  }
+
+  private async handleError(error: { status: any }, url: any) {
+    const { status } = error;
+
+    switch (status) {
+      case StatusCode.InternalServerError: {
+        notify("error", "Error de conexión", "Por favor intentelo mas tarde");
+        break;
+      }
+      case StatusCode.Forbidden: {
+        // Handle Forbidden
+        break;
+      }
+      case StatusCode.Unauthorized: {
         localStorage.removeItem("userStorage");
         Cookies.remove("jwt");
         await push("/login");
@@ -48,31 +125,16 @@ instance.interceptors.response.use(
             "Sesión expirada",
             "Por favor inicia sesión nuevamente"
           );
-      } catch (err) {
-        console.log("axios response: ", err);
+        break;
       }
-    } else {
-      notify("error", "Error de conexión", "Por favor intentelo mas tarde");
+      case StatusCode.TooManyRequests: {
+        // Handle TooManyRequests
+        break;
+      }
     }
+
+    return Promise.reject(error);
   }
-);
+}
 
-export const get = async (url: string): Promise<any> => {
-  const { data } = await instance.get(url);
-  return data;
-};
-
-export const post = async (url: string, body: any): Promise<any> => {
-  const { data } = await instance.post(url, body);
-  return data;
-};
-
-export const patch = async (url: string, body: any): Promise<any> => {
-  const { data } = await instance.patch(url, body);
-  return data;
-};
-export const del = (url: string) => instance.delete(url);
-export const setBearerToken = (token: any) => {
-  console.log("setBearerToken: ", token);
-  instance.defaults.headers.common.Authorization = `Bearer ${token}`;
-};
+export const http = new Http();

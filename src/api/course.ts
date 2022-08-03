@@ -1,5 +1,5 @@
 import type { ICourse } from "./../interfaces/course.interface";
-import { http } from "./../config/axios1";
+import { http } from "../config/axios";
 import { courseStore } from "./../state/store";
 
 export const createCourse = async (body: any): Promise<ICourse> => {

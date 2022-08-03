@@ -1,4 +1,4 @@
-import { http } from "./../config/axios1";
+import { http } from "../config/axios";
 
 import Cookies from "js-cookie";
 import type { IAuthUser } from "./../interfaces/auth.interface";

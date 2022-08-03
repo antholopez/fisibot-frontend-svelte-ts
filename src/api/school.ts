@@ -1,5 +1,5 @@
 import type { ISchool } from "./../interfaces/school.interface";
-import { http } from "./../config/axios1";
+import { http } from "../config/axios";
 import { schoolStore } from "./../state/store";
 
 export const getSchools = async () => {
