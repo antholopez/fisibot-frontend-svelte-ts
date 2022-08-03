@@ -22,6 +22,6 @@ export const notify = (status: status, title: string, text?: string) => {
       position: "right bottom",
     });
   } catch (error) {
-    console.log("notify error: ", error);
+    console.log("notify error: ", error)
   }
 };
