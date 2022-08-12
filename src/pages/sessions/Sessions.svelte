@@ -7,6 +7,7 @@
   import type { ISession } from "./../../interfaces/session.interface";
   import type { ICourse } from "./../../interfaces/course.interface";
   import ModalCreateSession from "./../../components/modals/CreateSession.svelte";
+  import { getSessionsByCourse } from "./../../api/course";
 
   export let params: any = {};
 
@@ -19,6 +20,7 @@
   let session: ISession = {
     number: null,
     description: null,
+    courseId: Number(params.id)
   };
   let course: ICourse = {
     name: null,
@@ -29,12 +31,17 @@
     group: null,
     idSchool: null,
   };
+  let sessions: ISession[] = [];
 
   onMount(async () => {
     const id = Number(params.id);
     userSession = authStore.getUserSession();
     course = courseStore.getOneCourse(id);
+    console.log('sessions', sessions);
     if (userSession) {
+      const data = await getSessionsByCourse(id);
+      console.log("data sessions", data);
+      sessions = data;
       loading = true;
       loading = false;
     }
@@ -53,26 +60,20 @@
       >
     </div>
     <div class="row mt-4">
-      <div class="col-sm-2">
-        <div class="card" style="width: 12rem;">
-          <div class="card-body text-center">
-            <h5 class="card-title">Sesion 1</h5>
-            <a href="#" class="btn btn-primary">Ingresar</a>
+      {#each sessions as session}
+        <div class="col-sm-2 mt-4">
+          <div class="card" style="width: 12rem;">
+            <div class="card-body text-center">
+              <h5 class="card-title">{session.description}</h5>
+              <a href="#" class="btn btn-primary">Ingresar</a>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col-sm-2">
-        <div class="card" style="width: 12rem;">
-          <div class="card-body text-center">
-            <h5 class="card-title">Sesion 1</h5>
-            <a href="#" class="btn btn-primary">Ingresar</a>
-          </div>
-        </div>
-      </div>
+      {/each}
     </div>
   </div>
 {/if}
-<ModalCreateSession bind:open {toggle} bind:session />
+<ModalCreateSession bind:open {toggle} bind:session bind:sessions/>
 
 <style>
 </style>
