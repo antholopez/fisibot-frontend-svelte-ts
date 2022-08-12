@@ -42,6 +42,8 @@ const createCourse = () => {
     subscribe,
     set: (data: ICourse[]) => update(() => data),
     get: () => get(courses),
+    getOneCourse: (id: number) =>
+      get(courses).find((course) => course.id === id),
   };
 };
 

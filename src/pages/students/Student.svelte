@@ -3,9 +3,10 @@
   import Loading from "./../../components/Loading.svelte";
   import { getStudentsByCourse } from "./../../api/student";
   import { onMount } from "svelte";
-  import { authStore } from "./../../state/store.js";
+  import { authStore, courseStore } from "./../../state/store.js";
   import type { IAuthUser } from "./../../interfaces/auth.interface";
   import type { IStudent } from "./../../interfaces/student.interface";
+  import type { ICourse } from "./../../interfaces/course.interface";
   import ModalCreateStudent from "./../../components/modals/CreateStudent.svelte";
 
   export let params: any = {};
@@ -15,6 +16,15 @@
 
   let loading = false;
   let userSession: IAuthUser = null;
+  let course: ICourse = {
+    name: null,
+    description: null,
+    image: null,
+    academicSemester: null,
+    cycle: null,
+    group: null,
+    idSchool: null,
+  };
   let students: IStudent[] = [];
   let filteredStudents: IStudent[] = [];
   let textSearch = "";
@@ -23,6 +33,8 @@
   onMount(async () => {
     const id = Number(params.id);
     userSession = authStore.getUserSession();
+    course = courseStore.getOneCourse(id);
+    console.log('course', course);
     if (userSession) {
       loading = true;
       const data = await getStudentsByCourse(id);
@@ -64,6 +76,7 @@
   <Loading />
 {:else}
   <div class="container">
+    <h1 class="text-center text-uppercase mt-2">{course.name}</h1>
     <div class="row g3 mt-4 mb-2">
       <div class="col-sm-8">
         <input

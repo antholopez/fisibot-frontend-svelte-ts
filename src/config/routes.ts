@@ -4,6 +4,7 @@ import { wrap } from "svelte-spa-router/wrap";
 import LoginSvelte from "./../pages/Login.svelte";
 import CourseSvelte from "./../pages/courses/Course.svelte";
 import StudentSvelte from "./../pages/students/Student.svelte";
+import SessionsSvelte from "./../pages/sessions/Sessions.svelte";
 
 const validateSessionUser = () => {
   const user = authStore.getUserSession();
@@ -19,6 +20,10 @@ export const routes = {
   "/courses/:id": CourseSvelte,
   "/courses/:id/students": wrap({
     component: StudentSvelte,
+    conditions: [async () => validateSessionUser()],
+  }),
+  "/courses/:id/sessions": wrap({
+    component: SessionsSvelte,
     conditions: [async () => validateSessionUser()],
   }),
 };

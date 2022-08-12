@@ -65,7 +65,7 @@
           <li class="nav-item">
             <a
               class="nav-link text-white"
-              href="/courses/{courseId}/session"
+              href="/courses/{courseId}/sessions"
               use:link>Sesiones</a
             >
           </li>
