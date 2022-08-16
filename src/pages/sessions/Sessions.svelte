@@ -36,13 +36,13 @@
   onMount(async () => {
     const id = Number(params.id);
     userSession = authStore.getUserSession();
-    course = courseStore.getOneCourse(id);
     console.log('sessions', sessions);
     if (userSession) {
+      loading = true;
+      course = await courseStore.getOneCourse(id);
       const data = await getSessionsByCourse(id);
       console.log("data sessions", data);
       sessions = data;
-      loading = true;
       loading = false;
     }
   });

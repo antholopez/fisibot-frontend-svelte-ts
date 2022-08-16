@@ -2,6 +2,7 @@ import type { ICourse } from "./../interfaces/course.interface";
 import { writable, get } from "svelte/store";
 import type { ISchool } from "./../interfaces/school.interface";
 import type { IAuthUser } from "./../interfaces/auth.interface";
+import { getCourses } from "./../api/course";
 
 const createAuth = () => {
   let persistedUser = localStorage.getItem("userStorage");
@@ -42,8 +43,9 @@ const createCourse = () => {
     subscribe,
     set: (data: ICourse[]) => update(() => data),
     get: () => get(courses),
-    getOneCourse: (id: number) =>
-      get(courses).find((course) => course.id === id),
+    getOneCourse: async (id: number) =>
+      get(courses).find((course) => course.id === id) ||
+      (await getCourses()).find((course) => course.id === id),
   };
 };
 
