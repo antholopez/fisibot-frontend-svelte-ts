@@ -33,7 +33,6 @@
   onMount(async () => {
     const id = Number(params.id);
     userSession = authStore.getUserSession();
-    console.log('course', course);
     if (userSession) {
       loading = true;
       course = await courseStore.getOneCourse(id);

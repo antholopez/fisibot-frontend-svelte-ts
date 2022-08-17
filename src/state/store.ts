@@ -42,6 +42,11 @@ const createCourse = () => {
   return {
     subscribe,
     set: (data: ICourse[]) => update(() => data),
+    addCourse: (data: ICourse) =>
+      update((c) => {
+        c.push(data);
+        return c;
+      }),
     get: () => get(courses),
     getOneCourse: async (id: number) =>
       get(courses).find((course) => course.id === id) ||

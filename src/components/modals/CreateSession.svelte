@@ -2,7 +2,6 @@
   import type { ISession } from "./../../interfaces/session.interface";
   import { Modal, ModalBody, ModalHeader } from "sveltestrap";
   import { notify } from "./../../utils/notification";
-  import { createStudent } from "./../../api/student";
   import { createSession } from "./../../api/course";
 
   export let open: boolean;

@@ -8,6 +8,7 @@
   import type { ICourse } from "./../../interfaces/course.interface";
   import ModalCreateSession from "./../../components/modals/CreateSession.svelte";
   import { getSessionsByCourse } from "./../../api/course";
+  import { link } from "svelte-spa-router";
 
   export let params: any = {};
 
@@ -16,11 +17,11 @@
 
   let loading = false;
   let userSession: IAuthUser;
-  
+
   let session: ISession = {
     number: null,
     description: null,
-    courseId: Number(params.id)
+    courseId: Number(params.id),
   };
   let course: ICourse = {
     name: null,
@@ -36,7 +37,6 @@
   onMount(async () => {
     const id = Number(params.id);
     userSession = authStore.getUserSession();
-    console.log('sessions', sessions);
     if (userSession) {
       loading = true;
       course = await courseStore.getOneCourse(id);
@@ -53,7 +53,7 @@
   <Loading />
 {:else}
   <div class="container">
-    <h1 class="text-center text-uppercase mt-2">{course.name}</h1>
+    <h2 class="text-center text-uppercase mt-2">{course.name}</h2>
     <div class="text-center">
       <button class="btn btn-dark me-md-2 mt-2" on:click={toggle}
         >Crear Semana</button
@@ -65,7 +65,11 @@
           <div class="card" style="width: 12rem;">
             <div class="card-body text-center">
               <h5 class="card-title">{session.description}</h5>
-              <a href="#" class="btn btn-primary">Ingresar</a>
+              <a
+                href="/courses/{course.id}/sessions/{session.id}" use:link
+                class="btn btn-primary"
+                >Ingresar</a
+              >
             </div>
           </div>
         </div>
@@ -73,7 +77,7 @@
     </div>
   </div>
 {/if}
-<ModalCreateSession bind:open {toggle} bind:session bind:sessions/>
+<ModalCreateSession bind:open {toggle} bind:session bind:sessions />
 
 <style>
 </style>
