@@ -48,7 +48,7 @@ export const getTopicsBySession = async (id: number, id2: number): Promise<ITopi
   return (await http.get<ITopic[]>(`/courses/${id}/sessions/${id2}/topics`)).data;
 }
 
-export const createQuestion = async (body: any): Promise<IQuestionAnswer> => {
+export const createQuestion = async (body: any): Promise<IQuestionAnswerList> => {
   const { data } = await http.post<any>("/courses/sessions/topics/questions", body);
   console.log("createQuestion: ", data);
   return data;

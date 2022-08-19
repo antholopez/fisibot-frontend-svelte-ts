@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { IQuestionAnswer } from "./../../interfaces/questionAnswer.interface";
+  import type { IQuestionAnswer, IQuestionAnswerList } from "./../../interfaces/questionAnswer.interface";
   import { Modal, ModalBody, ModalHeader } from "sveltestrap";
   import { notify } from "./../../utils/notification";
   import { createTopic, createQuestion } from "./../../api/course";
@@ -7,7 +7,7 @@
   export let open: boolean;
   export let toggle: () => boolean;
   export let questionAnswer: IQuestionAnswer;
-  export let questionsAnswers: IQuestionAnswer[] = [];
+  export let questionsAnswers: IQuestionAnswerList[] = [];
 
   let loadingForm = false;
   let disabledForm = true;

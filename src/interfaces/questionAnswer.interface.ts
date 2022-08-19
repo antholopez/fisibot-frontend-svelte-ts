@@ -1,7 +1,7 @@
 export interface IQuestionAnswer {
   id?: number | null;
   question: string | null;
-  answer: string | IAnswer[] | null;
+  answer: string | null;
   idTopic?: number | null;
 }
 
